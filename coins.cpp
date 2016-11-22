@@ -7,7 +7,12 @@
 #include <algorithm>
 #include <chrono>
 
-std::vector<int> nom = {1, 2};
+/*
+ * Does not work so well for really big numbers (stack overflow, bus error etc.)
+ */
+
+// keep it sorted
+std::vector<int> nom = {1, 2, 5};
 
 std::unordered_map<int, std::vector<int>> mem;
 
@@ -45,7 +50,6 @@ int main()
 {
     int N;
     std::cin >> N;
-    std::cout << N << std::endl;
     for (auto c : f(N)) std::cout << c;
     std::cout << std::endl;
     return 0;
