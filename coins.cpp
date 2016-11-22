@@ -9,6 +9,7 @@
 
 /*
  * Does not work so well for really big numbers (stack overflow, bus error etc.)
+ * SEE coins_iter.cpp for a better solution.
  */
 
 // keep it sorted
