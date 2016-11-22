@@ -12,6 +12,10 @@ static const int MAX = std::numeric_limits<int>::max();
 
 std::vector<int> coins = {5, 6};
 
+/*
+ *  Returns a map (coin cost -> number of such coins).
+ *  Map is empty if there is no solution.
+ */
 std::unordered_map<int, int> f(int n)
 {
     std::vector<int> counts(n + 1, MAX);
@@ -27,7 +31,7 @@ std::unordered_map<int, int> f(int n)
     {
         for (int c : coins)
         {
-            if (i - c >= 1 && counts[i - c] != -1)
+            if (i - c >= 1)
             {
                 if (counts[i - c] < counts[i])
                 {
