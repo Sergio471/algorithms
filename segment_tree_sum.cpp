@@ -14,14 +14,13 @@ class SegmentTree
     typedef long long sum_t;
 
     std::vector<sum_t> segm; // holds segment tree
-    size_t orig_size; // original vector size
+    const size_t orig_size; // original vector size
 
     // qs - query start pos (inclusive)
     // qe - query end pos (inclusive)
-    // ts - current start pos at pos in segm (inclusive)
-    // ts - current end pos at pos in segm (inclusive)
+    // [ts; te] -- range for which segm[pos] gives answer
     // pos - current pos in segm
-    sum_t query2(const std::vector<sum_t> &segm, size_t qs, size_t qe, size_t ts, size_t te, size_t pos)
+    sum_t query2(size_t qs, size_t qe, size_t ts, size_t te, size_t pos)
     {
         if (qs > te || qe < ts) // no overlap
         {
@@ -34,14 +33,14 @@ class SegmentTree
         else // partial overlap
         {
             size_t tmid = (ts + te) / 2;
-            return query2(segm, qs, qe, ts, tmid, 2*pos + 1) +
-                   query2(segm, qs, qe, tmid + 1, te, 2*pos + 2);
+            return query2(qs, qe, ts, tmid, 2*pos + 1) +
+                   query2(qs, qe, tmid + 1, te, 2*pos + 2);
         }
     }
 
     // s and e - current range (both inclusive)
     // pos - current pos in segm
-    void fill_segm(const std::vector<elem_t> &vec, std::vector<sum_t> &segm, size_t s, size_t e, size_t pos)
+    void fill_segm(const std::vector<elem_t>& vec, std::vector<sum_t>& segm, size_t s, size_t e, size_t pos)
     {
         if (s == e)
         {
@@ -60,14 +59,13 @@ class SegmentTree
 
 public:
 
-    SegmentTree(const std::vector<elem_t> &vec)
+    SegmentTree(const std::vector<elem_t>& vec) : orig_size(vec.size())
     {
         int last_lvl_len = 1;
         while (last_lvl_len < vec.size()) last_lvl_len *= 2;
         segm.resize(last_lvl_len * 2 - 1, -1);
 
         fill_segm(vec, segm, 0, vec.size() - 1, 0);
-        orig_size = vec.size();
     }
 
     // qs - query start pos (inclusive)
@@ -75,7 +73,7 @@ public:
     sum_t query(size_t s, size_t e)
     {
         if (!(e < orig_size && s <= e)) return 0;
-        return query2(segm, s, e, 0, orig_size - 1, 0);
+        return query2(s, e, 0, orig_size - 1, 0);
     }
 };
 
@@ -92,11 +90,11 @@ int main()
 
     const int N = 500;
     std::vector<int> v(N);
-    for (int i = 0; i < 500; ++i) v[i] = i;
+    for (int i = 0; i < N; ++i) v[i] = i;
     SegmentTree st{v};
-    for (int i = 0; i < 5000; ++i)
+    for (int i = 0; i < N; ++i)
     {
-        for (int j = i; j < 500; ++j)
+        for (int j = i; j < N; ++j)
         {
             const int true_sum = (i + j) * (j - i + 1) / 2;
             assert(true_sum == st.query(i, j));
